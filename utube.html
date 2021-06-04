@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0; 
+            box-sizing: border-box;
+            font-family: "Roboto", sans-serif;
+            background: #222; 
+        }
+        h1 {
+            text-align: center;
+            color: #eee;
+            font-family: "Roboto Thin", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 8px; 
+        }
+        .wrapper {
+            width: 100%; 
+            overflow: hidden;
+        }    
+        .slides-container {
+            height: 500px; 
+            position: relative;
+            transition: 900ms cubic-bezier(0.48,0.15,0.18,1)
+        }
+            .slide-image {
+                    height: 100%; 
+                    width: 100%; 
+                    position: absolute;
+                    /* border: 1px solid red;  */
+            }
+                .slide-image img {
+                    width: 100%; 
+                    height: 100%; 
+                    object-fit: cover;
+                }
+        .next-btn, 
+        .prev-btn {
+            background: #eee; 
+            padding: 16px; 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%);
+            font-size: 20px; 
+            box-shadow: 0 4px 8px rgba(0,0,0, 0.6); 
+            z-index: 100; 
+            cursor: pointer;
+            transition: 400ms; 
+        }         
+        .next-btn:hover, .prev-btn:hover {
+            background-color: #48f9ff;
+        }
+        .prev-btn {
+            left: 0; 
+        }
+        .next-btn {
+            right: 0; 
+        }
+        /* Navigation Dots */
+        .navigation-dots {
+            display: flex; 
+            justify-content: center;
+            align-items: center; 
+            height: 32px; 
+            margin: 16px 0; 
+        } 
+        .single-dot {
+            background-color: #333; 
+            height: 16px; 
+            width: 16px; 
+            margin: 0 8px; 
+            border: 1px solid black;
+            border-radius: 50%; 
+            cursor: pointer; 
+            transition: 400ms;
+        }
+        .single-dot.active {
+            background: #eee; 
+        }
+    </style>
+</head>
+<body>
+    <!-- https://www.youtube.com/watch?v=kw13gCyI8No&ab_channel=GTCoding -->
+    <h1>GTCoding</h1>
+    <div class="wrapper">
+        <div class="prev-btn"><i class="fas fa-chevron-left"></i></div>
+        <div class="slides-container">
+            <div class="slide-image">
+                <img src="images/img1.jpg">
+            </div>
+      
+            <div class="slide-image">
+                <img src="images/img2.jpg">
+            </div>
+            
+            <div class="slide-image">
+                <img src="images/img3.jpg">
+            </div>
+        </div>
+        <div class="next-btn"><i class="fas fa-chevron-right"></i></div>
+    </div>
+    <div class="navigation-dots">
+        <!-- <div class="single-dot"></div>
+        <div class="single-dot active"></div>
+        <div class="single-dot"></div> -->
+    </div>
+    
+    <script>
+        const slideImage = document.querySelectorAll(".slide-image")
+        const slidesContainer = document.querySelector(".slides-container")
+        const nextBtn = document.querySelector(".next-btn")
+        const prevBtn = document.querySelector(".prev-btn")
+        const navigationDots = document.querySelector(".navigation-dots")
+
+        let numberOfImages = slideImage.length;
+        let slideWidth = slideImage[0].clientWidth;
+        let currentSlide = 0 
+
+        // setup the slider
+        function init(){
+            slideImage.forEach((img, i)=> {
+                img.style.left = i * 100 + '%';
+            })
+            slideImage[0].classList.add('active') 
+        }
+    
+        init();
+
+        // Create navigation dots 
+        function createNavigationDots() {
+            console.log('creating navigatin dots')
+            for(let i=0; i<numberOfImages; i++) {
+                const dot = document.createElement("div");
+                dot.classList.add("single-dot")
+                navigationDots.appendChild(dot)
+                dot.addEventListener('click', ()=> {
+                    goToSlide(i)
+                })
+            }
+            navigationDots.children[0].classList.add('active')
+        }
+        createNavigationDots()
+        // next button
+
+        nextBtn.addEventListener("click", ()=> {
+            if(currentSlide >= numberOfImages -1) {
+                // currentSlide = 0
+                goToSlide(0)
+                return
+            }
+            currentSlide++
+            goToSlide(currentSlide)
+        })
+
+        // prev button
+
+        prevBtn.addEventListener("click", ()=> {
+            if(currentSlide <= 0) {
+                // currentSlide = numberOfImages-1
+                goToSlide(numberOfImages-1)
+                return
+            }
+            currentSlide--
+            goToSlide(currentSlide)
+        })
+
+            function goToSlide(slideNumber) {
+                currentSlide = slideNumber
+                slidesContainer.style.transform = "translateX(-"+slideWidth*slideNumber+"px)";
+                setActiveClass()
+            }
+
+                function setActiveClass() {
+                    // set active class for slide image 
+                    let currentActive = document.querySelector('.slide-image.active');
+                    currentActive.classList.remove('active')
+                    slideImage[currentSlide].classList.add('active')
+                    // set active class for navigatio dots 
+                    let currentDot = document.querySelector(".single-dot.active")
+                    currentDot.classList.remove("active")
+                    navigationDots.children[currentSlide].classList.add("active")
+                }
+    
+    </script>    
+</html>
